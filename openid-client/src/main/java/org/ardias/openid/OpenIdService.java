@@ -1,7 +1,6 @@
 package org.ardias.openid;
 
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -18,13 +17,9 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.openid4java.association.AssociationException;
-import org.openid4java.consumer.ConsumerException;
 import org.openid4java.consumer.ConsumerManager;
 import org.openid4java.consumer.VerificationResult;
-import org.openid4java.discovery.DiscoveryException;
 import org.openid4java.discovery.DiscoveryInformation;
 import org.openid4java.discovery.Identifier;
 import org.openid4java.message.AuthRequest;
@@ -66,7 +61,7 @@ public class OpenIdService {
         try {
             final List<DiscoveryInformation> discoveries = manager.discover(props.getProperty("openid.user.identifier"));
 
-            final boolean associate = BooleanUtils.toBoolean(props.getProperty("openid.associate"));
+            final boolean associate = Boolean.parseBoolean(props.getProperty("openid.associate"));
             if(!associate) {
                 manager.setAllowStateless(true);
                 manager.setMaxAssocAttempts(0);
@@ -85,16 +80,7 @@ public class OpenIdService {
             String openIdUrl = authRequest.getDestinationUrl(true);
 
             return Response.temporaryRedirect(new URI(openIdUrl)).build();
-        } catch (DiscoveryException e) {
-
-            return Response.serverError().entity(e.toString()).build();
-        } catch (ConsumerException e) {
-
-            return Response.serverError().entity(e.toString()).build();
-        } catch (MessageException e) {
-
-            return Response.serverError().entity(e.toString()).build();
-        } catch (URISyntaxException e) {
+        } catch (Exception e) {
             return Response.serverError().entity(e.toString()).build();
         }
 
@@ -115,15 +101,10 @@ public class OpenIdService {
             receivingURL.append("?").append(request.getQueryString());
         }
 
-
         VerificationResult verification;
         try {
             verification = manager.verify(receivingURL.toString(),openidResp, discovered);
-        } catch (MessageException e) {
-            return Response.serverError().entity(e.toString()).build();
-        } catch (DiscoveryException e) {
-            return Response.serverError().entity(e.toString()).build();
-        } catch (AssociationException e) {
+        } catch (Exception e) {
             return Response.serverError().entity(e.toString()).build();
         }
 
@@ -140,7 +121,7 @@ public class OpenIdService {
                 final Map<String, String> axMap =
                     receiveAttributeExchange(request, authSuccess);
 
-                final Map<String, String> attributesMap = new HashMap<String, String>();
+                final Map<String, String> attributesMap = new HashMap<>();
                 attributesMap.putAll(srMap);
                 attributesMap.putAll(axMap);
 
@@ -183,7 +164,6 @@ public class OpenIdService {
                 }
             }
         }
-
         return m;
     }
 
@@ -191,13 +171,10 @@ public class OpenIdService {
             HttpServletRequest httpReq, AuthSuccess authSuccess)
                     throws MessageException {
 
-        Map<String, String> m = new HashMap<String, String>();
+        Map<String, String> m = new HashMap<>();
         if (authSuccess.hasExtension(AxMessage.OPENID_NS_AX)) {
             FetchResponse fetchResp = (FetchResponse) authSuccess
                 .getExtension(AxMessage.OPENID_NS_AX);
-
-            // List emails = fetchResp.getAttributeValues("email");
-            // String email = (String) emails.get(0);
 
             List aliases = fetchResp.getAttributeAliases();
             Map attributes = new LinkedHashMap();
