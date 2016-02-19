@@ -8,14 +8,28 @@
     <version>1.0-SNAPSHOT</version>
     <modules>
         <module>openid-client</module>
-        <module>jaxrs-cas-client</module>
     </modules>
     <name>cas-tester</name>
 
     <properties>
         <jetty.version>9.2.10.v20150310</jetty.version>
+        <cxf.version>3.0.4</cxf.version>
     </properties>
 
+    <build>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <artifactId>maven-compiler-plugin</artifactId>
+                    <version>3.5.1</version>
+                    <configuration>
+                        <source>1.8</source>
+                        <target>1.8</target>
+                    </configuration>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+    </build>
 
   <dependencyManagement>
       <dependencies>
@@ -30,16 +44,31 @@
           <artifactId>openid4java</artifactId>
           <version>1.0.0</version>
       </dependency>
+          <dependency>
+              <groupId>commons-io</groupId>
+              <artifactId>commons-io</artifactId>
+              <version>2.4</version>
+          </dependency>
       <dependency>
           <groupId>org.apache.commons</groupId>
           <artifactId>commons-lang3</artifactId>
           <version>3.4</version>
       </dependency>
-      <dependency>
-          <groupId>org.apache.cxf</groupId>
-          <artifactId>cxf-rt-frontend-jaxrs</artifactId>
-          <version>3.0.4</version>
-      </dependency>
+      <!--<dependency>-->
+          <!--<groupId>org.apache.cxf</groupId>-->
+          <!--<artifactId>cxf-rt-frontend-jaxrs</artifactId>-->
+          <!--<version>${cxf.version}</version>-->
+      <!--</dependency>-->
+          <!--<dependency>-->
+              <!--<groupId>org.apache.cxf</groupId>-->
+              <!--<artifactId>cxf-rt-transports-http</artifactId>-->
+              <!--<version>${cxf.version}</version>-->
+          <!--</dependency>-->
+          <!--<dependency>-->
+              <!--<groupId>org.apache.cxf</groupId>-->
+              <!--<artifactId>cxf-rt-transports-http-jetty</artifactId>-->
+              <!--<version>${cxf.version}</version>-->
+          <!--</dependency>-->
       <dependency>
           <groupId>org.eclipse.jetty</groupId>
           <artifactId>jetty-server</artifactId>
@@ -49,11 +78,6 @@
           <groupId>org.eclipse.jetty</groupId>
           <artifactId>jetty-servlet</artifactId>
           <version>${jetty.version}</version>
-      </dependency>
-      <dependency>
-          <groupId>org.eclipse.jetty</groupId>
-          <artifactId>jetty-server</artifactId>
-          <version>9.2.10.v20150310</version>
       </dependency>
       </dependencies>
   </dependencyManagement>

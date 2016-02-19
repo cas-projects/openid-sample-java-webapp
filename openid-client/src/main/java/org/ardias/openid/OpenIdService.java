@@ -1,5 +1,6 @@
 package org.ardias.openid;
 
+import java.io.IOException;
 import java.net.URI;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -45,9 +46,11 @@ public class OpenIdService {
 
     private Properties props;
 
-    public OpenIdService(final Properties props) {
+    public OpenIdService() throws IOException {
+        this.props = new Properties();
+        this.props.load(
+            this.getClass().getClassLoader().getResourceAsStream("config.properties"));
 
-        this.props = props;
         this.manager = new ConsumerManager();
         this.cache = new HashMap<>();
     }

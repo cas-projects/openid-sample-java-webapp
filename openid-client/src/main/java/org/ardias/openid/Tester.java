@@ -1,16 +1,10 @@
 package org.ardias.openid;
 
 
-import java.util.HashSet;
-import java.util.Properties;
-import java.util.Set;
-
-import org.apache.cxf.jaxrs.servlet.CXFNonSpringJaxrsServlet;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
-
-
+import org.jboss.resteasy.plugins.server.servlet.HttpServletDispatcher;
 
 
 public class Tester {
@@ -27,23 +21,13 @@ public class Tester {
     }
 
     private void run() throws Exception {
-        Properties props = new Properties();
 
-        props.load(this.getClass().getClassLoader().getResourceAsStream("config.properties"));
-
-        OpenIdService resource = new OpenIdService(props);
-        Set<Object> resourceSingletons = new HashSet<>();
-        resourceSingletons.add(resource);
-        CXFNonSpringJaxrsServlet context = new CXFNonSpringJaxrsServlet(resourceSingletons);
-
-
-        ServletHolder sh = new ServletHolder(context);
-        ServletContextHandler contextHandler = new ServletContextHandler();
-        contextHandler.addServlet(sh, "/*");
-        contextHandler.setContextPath("/");
+        ServletContextHandler context = new ServletContextHandler();
+        context.setInitParameter("javax.ws.rs.Application","org.ardias.openid.OpenIdApplication");
+        context.addServlet(new ServletHolder(new HttpServletDispatcher()), "/");
 
         Server server = new Server(9000);
-        server.setHandler(contextHandler);
+        server.setHandler(context);
 
         System.out.println(">>> STARTING JETTY SERVER, PRESS ANY KEY TO STOP");
         server.start();
