@@ -41,18 +41,16 @@ public class OpenIdService {
 
     private static final String DISCOVERED = "discovered";
 
-    private Map<String, Object> cache;
-    private ConsumerManager manager;
+    private static Map<String, Object> cache = new HashMap<>();
+    private static ConsumerManager manager = new ConsumerManager();
 
-    private Properties props;
+    private static Properties props = new Properties();
 
     public OpenIdService() throws IOException {
-        this.props = new Properties();
-        this.props.load(
-            this.getClass().getClassLoader().getResourceAsStream("config.properties"));
-
-        this.manager = new ConsumerManager();
-        this.cache = new HashMap<>();
+        if (props.isEmpty()) {
+            this.props.load(
+                this.getClass().getClassLoader().getResourceAsStream("config.properties"));
+        }
     }
 
     @GET
